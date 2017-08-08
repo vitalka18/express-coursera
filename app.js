@@ -14,15 +14,13 @@ mongoose.connect(config.mongo.url);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    // we're connected!
     console.log("Connected correctly to server");
 });
 
-// var routes = require('./routes/i
-var users = require('./routes/users');
 var dishRouter = require('./routes/dishRouter');
 var promoRouter = require('./routes/promoRouter');
 var leaderRouter = require('./routes/leaderRouter');
+var users = require('./routes/users');
 
 var app = express();
 
@@ -48,9 +46,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use('/', routes);
 app.use('/users', users);
-app.use('/dishes',dishRouter);
-app.use('/promotions',promoRouter);
-app.use('/leadership',leaderRouter);
+app.use('/dishes', dishRouter);
+app.use('/promotions', promoRouter);
+app.use('/leadership', leaderRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

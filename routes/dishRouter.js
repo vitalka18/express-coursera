@@ -12,7 +12,7 @@ dishRouter.route('/')
         next();
     })
 
-    .get(Verify.verifyOrdinaryUser, function(req,res,next) {
+    .get(Verify.verifyOrdinaryUser, Verify.verifyAdminUser, function(req,res,next) {
         console.log('dishes');
         Dishes.find(function(err, data) {
             if (err) throw err;
