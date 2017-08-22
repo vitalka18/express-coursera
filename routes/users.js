@@ -1,12 +1,16 @@
 var express = require('express');
-var router = express.Router();
 var passport = require('passport');
 var User = require('../models/user');
 var Verify = require('./verify');
 
+var router = express.Router();
+
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
+router.get('/', Verify.verifyOrdinaryUser, function (req, res, next) {
+  User.find(function (err, data) {
+    if (err) throw err;
+    res.json(data);
+  });
 });
 
 router.post('/register', function (req, res) {
@@ -15,8 +19,16 @@ router.post('/register', function (req, res) {
       if (err) {
         return res.status(500).json({ err: err });
       }
-      passport.authenticate('local')(req, res, function () {
-        return res.status(200).json({ status: 'Registration Successful!' });
+      if (req.body.firstname) {
+        user.firstname = req.body.firstname;
+      }
+      if (req.body.lastname) {
+        user.lastname = req.body.lastname;
+      }
+      user.save(function (err, user) {
+        passport.authenticate('local')(req, res, function () {
+          return res.status(200).json({ status: 'Registration Successful!' });
+        });
       });
     });
 });

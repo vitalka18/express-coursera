@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var Leaders = require('../models/leaders');
+var Verify = require('./verify');
 
 var leaderRouter = express.Router();
 
@@ -11,14 +12,14 @@ leaderRouter.route('/')
         next();
     })
 
-    .get(function(req,res,next) {
+    .get(Verify.verifyOrdinaryUser, function(req,res,next) {
         Leaders.find(function(err, data) {
             if (err) throw err;
             res.json(data);
         });
     })
 
-    .post(function(req, res, next) {
+    .post(Verify.verifyAdminUser, function(req, res, next) {
         var leader = new Leaders(req.body);
 
         leader.save(function(err, leader) {
@@ -27,7 +28,7 @@ leaderRouter.route('/')
         });
     })
 
-    .delete(function(req, res, next) {
+    .delete(Verify.verifyAdminUser, function(req, res, next) {
         Leaders.deleteMany(function(err, data) {
             if (err) throw err;
             res.json(data);
@@ -39,21 +40,21 @@ leaderRouter.route('/:leaderId')
         next();
     })
 
-    .get(function(req, res, next) {
+    .get(Verify.verifyOrdinaryUser, function(req, res, next) {
         Leaders.find({_id: req.params.leaderId}, function(err, leader) {
             if (err) throw err;
             res.json(leader);
         });
     })
 
-    .put(function(req, res, next) {
+    .put(Verify.verifyAdminUser, function(req, res, next) {
         Leaders.findOneAndUpdate({_id: req.params.leaderId}, {name: req.body.name}, function(err, leader) {
             if (err) throw err;
             res.json(leader);
         });
     })
 
-    .delete(function(req, res, next) {
+    .delete(Verify.verifyAdminUser, function(req, res, next) {
         Leaders.deleteOne({_id: req.params.leaderId}, function(err, leader) {
             if (err) throw err;
             res.json(leader);

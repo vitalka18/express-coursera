@@ -1,4 +1,6 @@
 var mongoose = require('mongoose');
+var User = require('./user');
+
 var Schema = mongoose.Schema;
 
 var dishSchema = new Schema({
@@ -21,20 +23,30 @@ var dishSchema = new Schema({
     required: true
   },
   description: String,
-  comments: [{
-    rating: Number,
-    comment: {
-      type: String,
-      required: true
-    },
-    author: {
-      type: String,
-      required: true
-    }
-  }]
+  comments: []
 });
 
 
+var commentSchema = new Schema({
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: true
+  },
+  comment: {
+    type: String,
+    required: true
+  },
+  postedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
+}, {
+    timestamps: true
+  });
+
 var Dishes = mongoose.model('Dishes', dishSchema);
+var Comments = mongoose.model('Comments', commentSchema);
 
 module.exports = Dishes;
